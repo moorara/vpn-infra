@@ -10,15 +10,15 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 4.46"
     }
-    # https://registry.terraform.io/providers/hashicorp/random/latest/docs
-    random = {
-      source  = "hashicorp/random"
-      version = "~> 3.4"
-    }
     # https://registry.terraform.io/providers/hashicorp/local/latest/docs
     local = {
       source  = "hashicorp/local"
       version = "~> 2.2"
+    }
+    # https://registry.terraform.io/providers/hashicorp/random/latest/docs
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.4"
     }
   }
 }

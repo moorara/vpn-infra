@@ -1,5 +1,8 @@
 # https://developer.hashicorp.com/terraform/language/values/locals
 locals {
+  vpn_subnetwork_tag  = "vpn"
+  vpn_subnetwork_cidr = cidrsubnet(lookup(local.network_cidrs, var.region), 4, 0)
+
   # https://en.wikipedia.org/wiki/Classful_network
   # https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing
   network_cidrs = {

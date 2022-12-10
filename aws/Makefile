@@ -1,5 +1,5 @@
 ssh_path := ssh
-key_file := $(ssh_path)/bastion
+key_file := $(ssh_path)/vpn
 
 
 terraform.tfvars:
