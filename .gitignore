@@ -1,0 +1,17 @@
+# Terraform files
+*.tfvars
+*.tfstate
+*.tfstate.*
+*.auto.tfvars
+*.tfstate.backup
+*.tfstate.*.backup
+.terraform.lock.hcl
+.terraform/
+
+# Key files
+*.pem
+*.pub
+account.json
+
+# Misc files
+ssh/
