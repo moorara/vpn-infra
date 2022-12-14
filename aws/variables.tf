@@ -37,6 +37,27 @@ variable "ssh_incoming_cidrs" {
   default     = [ "0.0.0.0/0" ]
 }
 
+variable "http_incoming_cidrs" {
+  description = "A set of trusted CIDR blocks for incoming HTTP traffic."
+  type        = set(string)
+  nullable    = false
+  default     = [ "0.0.0.0/0" ]
+}
+
+variable "https_incoming_cidrs" {
+  description = "A set of trusted CIDR blocks for incoming HTTPS traffic."
+  type        = set(string)
+  nullable    = false
+  default     = [ "0.0.0.0/0" ]
+}
+
+variable "instance_type" {
+  description = "The AWS EC2 instance type for VPN servers."
+  type        = string
+  nullable    = false
+  default     = "t2.micro"
+}
+
 variable "ssh_public_key_file" {
   description = "The path to the public key file for SSH access."
   type        = string
@@ -47,11 +68,4 @@ variable "ssh_private_key_file" {
   description = "The path to the private key file for SSH access."
   type        = string
   nullable    = false
-}
-
-variable "instance_type" {
-  description = "The AWS EC2 instance type for VPN servers."
-  type        = string
-  nullable    = false
-  default     = "t2.micro"
 }
