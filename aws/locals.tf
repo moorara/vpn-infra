@@ -1,5 +1,7 @@
 # https://developer.hashicorp.com/terraform/language/values/locals
 locals {
+  subdomain = format("%s.%s", var.name, var.domain)
+
   # https://en.wikipedia.org/wiki/Classful_network
   # https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing
   network_cidrs = {

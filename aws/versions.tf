@@ -10,6 +10,16 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 4.46"
     }
+    # https://registry.terraform.io/providers/vancluever/acme/latest/docs
+    acme = {
+      source  = "vancluever/acme"
+      version = "~> 2.11"
+    }
+    # https://registry.terraform.io/providers/hashicorp/tls/latest/docs
+    tls = {
+      source  = "hashicorp/tls"
+      version = "~> 4.0"
+    }
     # https://registry.terraform.io/providers/hashicorp/local/latest/docs
     local = {
       source  = "hashicorp/local"

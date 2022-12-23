@@ -133,7 +133,7 @@ resource "aws_security_group" "vpn" {
   }
 
   ingress {
-    protocol    = "http"
+    protocol    = "tcp"
     from_port   = 80
     to_port     = 80
     cidr_blocks = var.http_incoming_cidrs
@@ -141,7 +141,7 @@ resource "aws_security_group" "vpn" {
   }
 
   ingress {
-    protocol    = "https"
+    protocol    = "tcp"
     from_port   = 443
     to_port     = 443
     cidr_blocks = var.https_incoming_cidrs

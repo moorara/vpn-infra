@@ -23,6 +23,18 @@ variable "name" {
   nullable    = false
 }
 
+variable "domain" {
+  description = "A domain name for the deployment."
+  type        = string
+  nullable    = false
+}
+
+variable "email" {
+  description = "An email address for the deployment."
+  type        = string
+  nullable    = false
+}
+
 variable "icmp_incoming_cidrs" {
   description = "A set of trusted CIDR blocks for incoming ICMP traffic."
   type        = set(string)
