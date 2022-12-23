@@ -1,7 +1,3 @@
-# ====================================================================================================
-#  CERTIFICATES
-# ====================================================================================================
-
 # https://registry.terraform.io/providers/vancluever/acme/latest/docs
 provider "acme" {
   server_url = "https://acme-v02.api.letsencrypt.org/directory"
@@ -32,9 +28,9 @@ resource "acme_certificate" "vpn" {
   provider = acme.staging
 
   account_key_pem           = acme_registration.vpn.account_key_pem
-  common_name               = var.cert_domain
-  subject_alternative_names = var.cert_alt_domains
-  min_days_remaining        = 60
+  common_name               = var.subdomain
+  subject_alternative_names = []
+  min_days_remaining        = 90
 
   # https://registry.terraform.io/providers/vancluever/acme/latest/docs/resources/certificate#using-dns-challenges
   # https://registry.terraform.io/providers/vancluever/acme/latest/docs/guides/dns-providers-route53

@@ -1,7 +1,3 @@
-# ====================================================================================================
-#  NETWORKS
-# ====================================================================================================
-
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc
 resource "aws_vpc" "vpn" {
   cidr_block           = lookup(local.network_cidrs, var.region)
@@ -37,10 +33,6 @@ resource "aws_subnet" "vpn" {
     ignore_changes = [ tags ]
   }
 }
-
-# ====================================================================================================
-#  ROUTERS
-# ====================================================================================================
 
 # https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/internet_gateway
@@ -90,10 +82,6 @@ resource "aws_route_table_association" "vpn" {
   subnet_id      = element(aws_subnet.vpn.*.id, count.index)
   route_table_id = aws_route_table.vpn.id
 }
-
-# ====================================================================================================
-#  FIREWALL RULES
-# ====================================================================================================
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group
 resource "aws_security_group" "vpn" {

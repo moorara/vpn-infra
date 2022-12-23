@@ -1,7 +1,3 @@
-# ====================================================================================================
-#  LAUNCH TEMPLATES
-# ====================================================================================================
-
 # https://wiki.debian.org/Cloud/AmazonEC2Image
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami
 data "aws_ami" "debian" {
@@ -39,7 +35,7 @@ resource "aws_launch_template" "vpn" {
   image_id                             = data.aws_ami.debian.id
   instance_type                        = var.instance_type
   key_name                             = aws_key_pair.vpn.key_name
-  user_data                            = filebase64("${path.module}/bootstrap.sh")
+  user_data                            = filebase64(data.template_file.user_data.rendered)
   instance_initiated_shutdown_behavior = "terminate"
 
   iam_instance_profile {
@@ -71,9 +67,15 @@ resource "aws_launch_template" "vpn" {
   }
 }
 
-# ====================================================================================================
-#  VM INSTANCES
-# ====================================================================================================
+# https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file
+data "template_file" "user_data" {
+  template = file("${path.module}/bootstrap.sh")
+  vars = {
+    username = local.panel_username
+    password = local.panel_password
+    port     = local.panel_port
+  }
+}
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance
 resource "aws_instance" "vpn" {
@@ -83,16 +85,32 @@ resource "aws_instance" "vpn" {
     id      = aws_launch_template.vpn.id
     version = "$Latest"
   }
-}
 
-# ====================================================================================================
-#  SSH CONFIGS
-# ====================================================================================================
+  # https://developer.hashicorp.com/terraform/language/resources/provisioners/syntax
+  # https://developer.hashicorp.com/terraform/language/resources/provisioners/connection
+  # https://developer.hashicorp.com/terraform/language/resources/provisioners/file
+
+  provisioner "file" {
+    content     = acme_certificate.vpn.private_key_pem
+    destination = "/cert/private_key.pem"
+  }
+
+  provisioner "file" {
+    content     = acme_certificate.vpn.certificate_pem
+    destination = "/cert/certificate.pem"
+  }
+
+  provisioner "file" {
+    content     = acme_certificate.vpn.issuer_cert
+    destination = "/cert/issuer_cert.pem"
+  }
+}
 
 # https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file
 data "template_file" "ssh_config" {
   template = file("${path.module}/sshconfig.tpl")
   vars = {
+    subdomain   = var.subdomain
     address     = aws_instance.vpn.public_ip
     private_key = basename(var.ssh_private_key_file)
   }

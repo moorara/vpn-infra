@@ -7,8 +7,8 @@ terraform.tfvars:
 	@ echo 'secret_key = "tbd"' >> terraform.tfvars
 	@ echo 'region     = "tbd"' >> terraform.tfvars
 	@ echo 'name       = "tbd"' >> terraform.tfvars
-	@ echo 'domain     = "tbd"' >> terraform.tfvars
-	@ echo 'email      = "tbd"' >> terraform.tfvars
+	@ echo 'subdomain  = "tbd"' >> terraform.tfvars
+	@ echo 'acme_email = "tbd"' >> terraform.tfvars
 
 .PHONY: keys
 keys:

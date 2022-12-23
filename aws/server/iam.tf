@@ -1,7 +1,3 @@
-# ====================================================================================================
-#  PROFILES
-# ====================================================================================================
-
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_instance_profile
 resource "aws_iam_instance_profile" "vpn" {
   name = "${var.name}-vpn"
@@ -15,10 +11,6 @@ resource "aws_iam_instance_profile" "vpn" {
     ignore_changes = [ tags ]
   }
 }
-
-# ====================================================================================================
-#  ROLES
-# ====================================================================================================
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role
 resource "aws_iam_role" "vpn" {

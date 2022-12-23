@@ -18,19 +18,19 @@ variable "region" {
 }
 
 variable "name" {
-  description = "A human-readable name for the deployment resources."
+  description = "A human-readable name for the deployment."
   type        = string
   nullable    = false
 }
 
-variable "domain" {
-  description = "A domain name for the deployment."
+variable "subdomain" {
+  description = "A subdomain for accessing the VPN server."
   type        = string
   nullable    = false
 }
 
-variable "email" {
-  description = "An email address for the deployment."
+variable "acme_email" {
+  description = "An email address for registering an account with ACME."
   type        = string
   nullable    = false
 }
@@ -67,7 +67,7 @@ variable "instance_type" {
   description = "The AWS EC2 instance type for VPN servers."
   type        = string
   nullable    = false
-  default     = "t2.micro"
+  default     = "m5.large"
 }
 
 variable "ssh_public_key_file" {

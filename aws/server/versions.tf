@@ -8,12 +8,12 @@ terraform {
     # https://registry.terraform.io/providers/hashicorp/aws/latest/docs
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.46"
+      version = "~> 4.48"
     }
     # https://registry.terraform.io/providers/vancluever/acme/latest/docs
     acme = {
       source  = "vancluever/acme"
-      version = "~> 2.11"
+      version = "~> 2.12"
     }
     # https://registry.terraform.io/providers/hashicorp/tls/latest/docs
     tls = {
