@@ -19,19 +19,19 @@ variable "region" {
 }
 
 variable "name" {
-  description = "A human-readable name for the deployment resources."
+  description = "A human-readable name for the deployment."
   type        = string
   nullable    = false
 }
 
-variable "domain" {
-  description = "A domain name for the deployment."
+variable "subdomain" {
+  description = "A subdomain for accessing the VPN server."
   type        = string
   nullable    = false
 }
 
-variable "email" {
-  description = "An email address for the deployment."
+variable "acme_email" {
+  description = "An email address for registering an account with ACME."
   type        = string
   nullable    = false
 }
@@ -68,7 +68,7 @@ variable "machine_type" {
   description = "The Google Cloud machine type for VPN servers."
   type        = string
   nullable    = false
-  default     = "e2-micro"
+  default     = "e2-standard-2"
 }
 
 variable "ssh_public_key_file" {

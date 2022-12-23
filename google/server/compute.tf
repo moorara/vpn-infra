@@ -1,9 +1,5 @@
-# ====================================================================================================
-#  INSTANCE TEMPLATES
-# ====================================================================================================
-
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_image
-data "google_compute_image" "vpn" {
+data "google_compute_image" "debian" {
   family  = "debian-11"
   project = "debian-cloud"
 }
@@ -16,7 +12,7 @@ resource "google_compute_instance_template" "vpn" {
   machine_type = var.machine_type
 
   disk {
-    source_image = data.google_compute_image.vpn.id
+    source_image = data.google_compute_image.debian.id
     boot         = true
     auto_delete  = true
     disk_type    = "pd-standard"
@@ -52,7 +48,7 @@ resource "google_compute_instance_template" "vpn" {
     ssh-keys = format("admin:%s", file(var.ssh_public_key_file))
 
     # https://cloud.google.com/compute/docs/instances/startup-scripts/linux
-    startup-script = file("${path.module}/bootstrap.sh")
+    startup-script = data.template_file.startup_script.rendered
   }
 
   tags = [ "vpn" ]
@@ -67,25 +63,47 @@ resource "google_compute_instance_template" "vpn" {
   }
 }
 
-# ====================================================================================================
-#  VM INSTANCES
-# ====================================================================================================
+# https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file
+data "template_file" "startup_script" {
+  template = file("${path.module}/bootstrap.sh")
+  vars = {
+    username = local.panel_username
+    password = local.panel_password
+    port     = local.panel_port
+  }
+}
 
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance_from_template
 resource "google_compute_instance_from_template" "vpn" {
   name                     = "${var.name}-vpn"
   zone                     = data.google_compute_zones.available.names[0]
   source_instance_template = google_compute_instance_template.vpn.id
-}
 
-# ====================================================================================================
-#  SSH CONFIGS
-# ====================================================================================================
+  # https://developer.hashicorp.com/terraform/language/resources/provisioners/syntax
+  # https://developer.hashicorp.com/terraform/language/resources/provisioners/connection
+  # https://developer.hashicorp.com/terraform/language/resources/provisioners/file
+
+  provisioner "file" {
+    content     = acme_certificate.vpn.private_key_pem
+    destination = "/cert/private_key.pem"
+  }
+
+  provisioner "file" {
+    content     = acme_certificate.vpn.certificate_pem
+    destination = "/cert/certificate.pem"
+  }
+
+  provisioner "file" {
+    content     = acme_certificate.vpn.issuer_cert
+    destination = "/cert/issuer_cert.pem"
+  }
+}
 
 # https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file
 data "template_file" "ssh_config" {
   template = file("${path.module}/sshconfig.tpl")
   vars = {
+    subdomain   = var.subdomain
     address     = google_compute_instance_from_template.vpn.network_interface.0.access_config.0.nat_ip
     private_key = basename(var.ssh_private_key_file)
   }

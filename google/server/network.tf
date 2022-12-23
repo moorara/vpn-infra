@@ -1,7 +1,3 @@
-# ====================================================================================================
-#  NETWORKS
-# ====================================================================================================
-
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network
 resource "google_compute_network" "vpn" {
   name                    = "${var.name}-vpn-network"
@@ -19,10 +15,6 @@ resource "google_compute_subnetwork" "vpn" {
   ip_cidr_range            = local.vpn_subnetwork_cidr
   private_ip_google_access = false
 }
-
-# ====================================================================================================
-#  ROUTERS
-# ====================================================================================================
 
 # https://cloud.google.com/vpc/docs/routes
 # https://cloud.google.com/network-connectivity/docs/router/concepts/overview
@@ -52,9 +44,7 @@ resource "google_compute_router_nat" "main" {
   }
 }
 
-# ====================================================================================================
-#  FIREWALL RULES
-# ====================================================================================================
+# https://cloud.google.com/vpc/docs/firewalls
 
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall
 resource "google_compute_firewall" "egress_all" {

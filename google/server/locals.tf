@@ -1,6 +1,15 @@
+# https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password
+resource "random_password" "panel" {
+  length  = 16
+  special = true
+}
+
 # https://developer.hashicorp.com/terraform/language/values/locals
 locals {
-  subdomain = format("%s.%s", var.name, var.domain)
+  # X-UI configs
+  panel_port     = 80
+  panel_username = "admin"
+  panel_password = random_password.panel.result
 
   vpn_subnetwork_tag  = "vpn"
   vpn_subnetwork_cidr = cidrsubnet(lookup(local.network_cidrs, var.region), 4, 0)
