@@ -1,23 +1,32 @@
+ssh_user := admin
 ssh_path := ssh
 key_file := $(ssh_path)/vpn
 
 
 terraform.tfvars:
-	@ echo 'access_key = "tbd"' >> terraform.tfvars
-	@ echo 'secret_key = "tbd"' >> terraform.tfvars
-	@ echo 'region     = "tbd"' >> terraform.tfvars
-	@ echo 'name       = "tbd"' >> terraform.tfvars
+	@ echo 'credentials_file = "tbd"' >> terraform.tfvars
+	@ echo 'project          = "tbd"' >> terraform.tfvars
+	@ echo 'region           = "tbd"' >> terraform.tfvars
+	@ echo 'name             = "tbd"' >> terraform.tfvars
+	@ echo 'subdomain        = "tbd"' >> terraform.tfvars
+	@ echo 'acme_email       = "tbd"' >> terraform.tfvars
+
+config.gcs.tfbackend:
+	@ echo 'credentials = "tbd"' >> config.gcs.tfbackend
+	@ echo 'bucket      = "tbd"' >> config.gcs.tfbackend
+	@ echo 'prefix      = "tbd"' >> config.gcs.tfbackend
 
 .PHONY: keys
 keys:
 	@ mkdir -p $(ssh_path)
-	@ ssh-keygen -f $(key_file) -t rsa -N '' 1> /dev/null && \
+	@ ssh-keygen -f $(key_file) -t rsa -N '' -C $(ssh_user) 1> /dev/null && \
 	  chmod 400 $(key_file) && \
 	  mv $(key_file) $(key_file).pem
 
 .PHONY: init
 init:
-	@ terraform init
+	@ terraform init \
+	    -backend-config=config.gcs.tfbackend
 
 .PHONY: format
 format:

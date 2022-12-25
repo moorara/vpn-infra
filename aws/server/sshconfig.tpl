@@ -1,4 +1,4 @@
-Host vpn
+Host ${subdomain}
   HostName ${address}
   User admin
   IdentityFile ${private_key}

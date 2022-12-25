@@ -1,5 +1,16 @@
+# https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password
+resource "random_password" "panel" {
+  length  = 16
+  special = true
+}
+
 # https://developer.hashicorp.com/terraform/language/values/locals
 locals {
+  # X-UI configs
+  panel_port     = 80
+  panel_username = "admin"
+  panel_password = random_password.panel.result
+
   # https://en.wikipedia.org/wiki/Classful_network
   # https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing
   network_cidrs = {
