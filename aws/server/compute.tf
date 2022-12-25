@@ -35,7 +35,7 @@ resource "aws_launch_template" "vpn" {
   image_id                             = data.aws_ami.debian.id
   instance_type                        = var.instance_type
   key_name                             = aws_key_pair.vpn.key_name
-  user_data                            = filebase64(data.template_file.user_data.rendered)
+  user_data                            = base64encode(data.template_file.user_data.rendered)
   instance_initiated_shutdown_behavior = "terminate"
 
   iam_instance_profile {
@@ -90,6 +90,22 @@ resource "aws_instance" "vpn" {
   # https://developer.hashicorp.com/terraform/language/resources/provisioners/connection
   # https://developer.hashicorp.com/terraform/language/resources/provisioners/file
 
+  connection {
+    type        = "ssh"
+    user        = "admin"
+    host        = self.public_ip
+    private_key = file(var.ssh_private_key_file)
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo mkdir -p /cert",
+      "sudo chown :admin /cert",
+      "sudo usermod -a -G admin admin",
+      "sudo chmod g+w /cert",
+    ]
+  }
+
   provisioner "file" {
     content     = acme_certificate.vpn.private_key_pem
     destination = "/cert/private_key.pem"
@@ -101,7 +117,7 @@ resource "aws_instance" "vpn" {
   }
 
   provisioner "file" {
-    content     = acme_certificate.vpn.issuer_cert
+    content     = acme_certificate.vpn.issuer_pem
     destination = "/cert/issuer_cert.pem"
   }
 }

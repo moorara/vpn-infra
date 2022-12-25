@@ -12,19 +12,13 @@ variable "secret_key" {
 }
 
 variable "region" {
-  description = "An AWS region for the S3 bucket to be used as Terraform backend."
+  description = "An AWS region to associate the S3 bucket with."
   type        = string
   nullable    = false
 }
 
 variable "domain" {
-  description = "A domain name to be used as suffix for creating subdomains."
+  description = "A domain name for the S3 bucket name."
   type        = string
-  nullable    = false
-}
-
-variable "names" {
-  description = "A list of names to be used as prefix for creating subdomains."
-  type        = list(string)
   nullable    = false
 }

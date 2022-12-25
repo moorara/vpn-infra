@@ -10,6 +10,11 @@ terraform.tfvars:
 	@ echo 'subdomain  = "tbd"' >> terraform.tfvars
 	@ echo 'acme_email = "tbd"' >> terraform.tfvars
 
+config.s3.tfbackend:
+	@ echo 'bucket = "tbd"' >> config.s3.tfbackend
+	@ echo 'key    = "tbd"' >> config.s3.tfbackend
+	@ echo 'region = "tbd"' >> config.s3.tfbackend
+
 .PHONY: keys
 keys:
 	@ mkdir -p $(ssh_path)
@@ -19,7 +24,8 @@ keys:
 
 .PHONY: init
 init:
-	@ terraform init
+	@ terraform init \
+	    -backend-config=config.s3.tfbackend
 
 .PHONY: format
 format:

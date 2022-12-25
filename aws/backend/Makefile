@@ -3,16 +3,10 @@ terraform.tfvars:
 	@ echo 'secret_key = "tbd"' >> terraform.tfvars
 	@ echo 'region     = "tbd"' >> terraform.tfvars
 	@ echo 'domain     = "tbd"' >> terraform.tfvars
-	@ echo 'names      = "tbd"' >> terraform.tfvars
-
-config.s3.tfbackend:
-	@ echo 'bucket = "tbd"' >> config.s3.tfbackend
-	@ echo 'region = "tbd"' >> config.s3.tfbackend
 
 .PHONY: init
 init:
-	@ terraform init \
-	    -backend-config=config.s3.tfbackend
+	@ terraform init
 
 .PHONY: format
 format:
