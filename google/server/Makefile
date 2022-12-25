@@ -11,6 +11,11 @@ terraform.tfvars:
 	@ echo 'subdomain        = "tbd"' >> terraform.tfvars
 	@ echo 'acme_email       = "tbd"' >> terraform.tfvars
 
+config.gcs.tfbackend:
+	@ echo 'credentials = "tbd"' >> config.gcs.tfbackend
+	@ echo 'bucket      = "tbd"' >> config.gcs.tfbackend
+	@ echo 'prefix      = "tbd"' >> config.gcs.tfbackend
+
 .PHONY: keys
 keys:
 	@ mkdir -p $(ssh_path)
@@ -20,7 +25,8 @@ keys:
 
 .PHONY: init
 init:
-	@ terraform init
+	@ terraform init \
+	    -backend-config=config.gcs.tfbackend
 
 .PHONY: format
 format:

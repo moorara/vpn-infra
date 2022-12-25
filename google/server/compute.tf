@@ -83,6 +83,22 @@ resource "google_compute_instance_from_template" "vpn" {
   # https://developer.hashicorp.com/terraform/language/resources/provisioners/connection
   # https://developer.hashicorp.com/terraform/language/resources/provisioners/file
 
+  connection {
+    type        = "ssh"
+    user        = "admin"
+    host        = self.network_interface.0.access_config.0.nat_ip
+    private_key = file(var.ssh_private_key_file)
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo mkdir -p /cert",
+      "sudo chown :admin /cert",
+      "sudo usermod -a -G admin admin",
+      "sudo chmod g+w /cert",
+    ]
+  }
+
   provisioner "file" {
     content     = acme_certificate.vpn.private_key_pem
     destination = "/cert/private_key.pem"
@@ -94,7 +110,7 @@ resource "google_compute_instance_from_template" "vpn" {
   }
 
   provisioner "file" {
-    content     = acme_certificate.vpn.issuer_cert
+    content     = acme_certificate.vpn.issuer_pem
     destination = "/cert/issuer_cert.pem"
   }
 }

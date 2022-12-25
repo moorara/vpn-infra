@@ -1,17 +1,12 @@
 terraform.tfvars:
 	@ echo 'credentials_file = "tbd"' >> terraform.tfvars
 	@ echo 'project          = "tbd"' >> terraform.tfvars
+	@ echo 'location         = "tbd"' >> terraform.tfvars
 	@ echo 'domain           = "tbd"' >> terraform.tfvars
-	@ echo 'names            = "tbd"' >> terraform.tfvars
-
-config.gcs.tfbackend:
-	@ echo 'credentials = "tbd"' >> config.gcs.tfbackend
-	@ echo 'bucket      = "tbd"' >> config.gcs.tfbackend
 
 .PHONY: init
 init:
-	@ terraform init \
-	    -backend-config=config.gcs.tfbackend
+	@ terraform init
 
 .PHONY: format
 format:
