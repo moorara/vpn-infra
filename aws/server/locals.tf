@@ -1,7 +1,10 @@
 # https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password
 resource "random_password" "panel" {
   length  = 16
-  special = true
+  lower   = true
+  upper   = true
+  numeric = true
+  special = false
 }
 
 # https://developer.hashicorp.com/terraform/language/values/locals
