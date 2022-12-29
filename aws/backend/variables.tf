@@ -12,13 +12,13 @@ variable "secret_key" {
 }
 
 variable "region" {
-  description = "An AWS region to associate the S3 bucket with."
+  description = "An AWS region for the S3 bucket."
   type        = string
   nullable    = false
 }
 
 variable "domain" {
-  description = "A domain name for the S3 bucket name."
+  description = "A domain name for the S3 bucket."
   type        = string
   nullable    = false
 }
