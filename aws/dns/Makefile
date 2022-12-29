@@ -1,18 +1,13 @@
 terraform.tfvars:
-	@ echo 'access_key = "tbd"' >> terraform.tfvars
-	@ echo 'secret_key = "tbd"' >> terraform.tfvars
-	@ echo 'region     = "tbd"' >> terraform.tfvars
-	@ echo 'domain     = "tbd"' >> terraform.tfvars
-	@ echo 'names      = "tbd"' >> terraform.tfvars
-
-config.s3.tfbackend:
-	@ echo 'bucket = "tbd"' >> config.s3.tfbackend
-	@ echo 'region = "tbd"' >> config.s3.tfbackend
+	@ read -p "Enter a domain name registered with AWS: " domain; \
+	  read -p "Enter a space-separated list of names to create a subdomain for each: " names; \
+	  echo "domain = \"$$domain\"" >> terraform.tfvars; \
+	  echo "names  = $$(echo "\"$$names\"" | jq -c 'split(" ")')" >> terraform.tfvars; \
 
 .PHONY: init
 init:
 	@ terraform init \
-	    -backend-config=config.s3.tfbackend
+	    -backend-config="../config.s3.tfbackend"
 
 .PHONY: format
 format:
@@ -24,19 +19,23 @@ validate:
 
 .PHONY: plan
 plan:
-	@ terraform plan
+	@ terraform plan \
+	    -var-file="../terraform.tfvars"
 
 .PHONY: apply
 apply:
-	@ terraform apply
+	@ terraform apply \
+	    -var-file="../terraform.tfvars"
 
 .PHONY: refresh
 refresh:
-	@ terraform refresh
+	@ terraform refresh \
+	    -var-file="../terraform.tfvars"
 
 .PHONY: destroy
 destroy:
-	@ terraform destroy
+	@ terraform destroy \
+	    -var-file="../terraform.tfvars"
 
 .PHONY: clean
 clean:
