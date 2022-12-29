@@ -13,13 +13,13 @@ variable "project" {
 }
 
 variable "domain" {
-  description = "A domain name to be used as suffix for creating subdomains."
+  description = "A domain name registered with Google Cloud."
   type        = string
   nullable    = false
 }
 
 variable "names" {
-  description = "A list of names to be used as prefix for creating subdomains."
+  description = "A list of names to create a subdomain for each."
   type        = list(string)
   nullable    = false
 }

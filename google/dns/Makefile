@@ -1,17 +1,13 @@
 terraform.tfvars:
-	@ echo 'credentials_file = "tbd"' >> terraform.tfvars
-	@ echo 'project          = "tbd"' >> terraform.tfvars
-	@ echo 'domain           = "tbd"' >> terraform.tfvars
-	@ echo 'names            = "tbd"' >> terraform.tfvars
-
-config.gcs.tfbackend:
-	@ echo 'credentials = "tbd"' >> config.gcs.tfbackend
-	@ echo 'bucket      = "tbd"' >> config.gcs.tfbackend
+	@ read -p "Enter a domain name registered with Google Cloud: " domain; \
+	  read -p "Enter a space-separated list of names to create a subdomain for each: " names; \
+	  echo "domain = \"$$domain\"" >> terraform.tfvars; \
+	  echo "names  = $$(echo "\"$$names\"" | jq -c 'split(" ")')" >> terraform.tfvars; \
 
 .PHONY: init
 init:
 	@ terraform init \
-	    -backend-config=config.gcs.tfbackend
+	    -backend-config="../config.gcs.tfbackend"
 
 .PHONY: format
 format:
@@ -23,19 +19,23 @@ validate:
 
 .PHONY: plan
 plan:
-	@ terraform plan
+	@ terraform plan \
+	    -var-file="../terraform.tfvars"
 
 .PHONY: apply
 apply:
-	@ terraform apply
+	@ terraform apply \
+	    -var-file="../terraform.tfvars"
 
 .PHONY: refresh
 refresh:
-	@ terraform refresh
+	@ terraform refresh \
+	    -var-file="../terraform.tfvars"
 
 .PHONY: destroy
 destroy:
-	@ terraform destroy
+	@ terraform destroy \
+	    -var-file="../terraform.tfvars"
 
 .PHONY: clean
 clean:
