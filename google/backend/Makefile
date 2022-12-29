@@ -1,8 +1,8 @@
 terraform.tfvars:
-	@ echo 'credentials_file = "tbd"' >> terraform.tfvars
-	@ echo 'project          = "tbd"' >> terraform.tfvars
-	@ echo 'location         = "tbd"' >> terraform.tfvars
-	@ echo 'domain           = "tbd"' >> terraform.tfvars
+	@ read -p "Enter a Google Cloud location (see https://cloud.google.com/storage/docs/locations): " location; \
+	  read -p "Enter a domain name registered with Google Cloud: " domain; \
+	  echo "location = \"$$location\"" > terraform.tfvars; \
+	  echo "domain   = \"$$domain\"" >> terraform.tfvars; \
 
 .PHONY: init
 init:
@@ -18,19 +18,23 @@ validate:
 
 .PHONY: plan
 plan:
-	@ terraform plan
+	@ terraform plan \
+	    -var-file="../terraform.tfvars"
 
 .PHONY: apply
 apply:
-	@ terraform apply
+	@ terraform apply \
+	    -var-file="../terraform.tfvars"
 
 .PHONY: refresh
 refresh:
-	@ terraform refresh
+	@ terraform refresh \
+	    -var-file="../terraform.tfvars"
 
 .PHONY: destroy
 destroy:
-	@ terraform destroy
+	@ terraform destroy \
+	    -var-file="../terraform.tfvars"
 
 .PHONY: clean
 clean:

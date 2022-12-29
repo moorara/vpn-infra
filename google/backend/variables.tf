@@ -7,19 +7,19 @@ variable "credentials_file" {
 }
 
 variable "project" {
-  description = "A Google Cloud project to associate the GCS bucket with."
+  description = "A Google Cloud project for the GCS bucket."
   type        = string
   nullable    = false
 }
 
 variable "location" {
-  description = "A Google Cloud location to associate the GCS bucket with."
+  description = "A Google Cloud location for the GCS bucket."
   type        = string
   nullable    = false
 }
 
 variable "domain" {
-  description = "A domain name for the GCS bucket name."
+  description = "A domain name for the GCS bucket."
   type        = string
   nullable    = false
 }

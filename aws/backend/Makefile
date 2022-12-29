@@ -1,8 +1,8 @@
 terraform.tfvars:
-	@ echo 'access_key = "tbd"' >> terraform.tfvars
-	@ echo 'secret_key = "tbd"' >> terraform.tfvars
-	@ echo 'region     = "tbd"' >> terraform.tfvars
-	@ echo 'domain     = "tbd"' >> terraform.tfvars
+	@ read -p "Enter an AWS region: " region; \
+	  read -p "Enter a domain name registered with AWS: " domain; \
+	  echo "region = \"$$region\"" > terraform.tfvars; \
+	  echo "domain = \"$$domain\"" >> terraform.tfvars; \
 
 .PHONY: init
 init:
@@ -18,19 +18,23 @@ validate:
 
 .PHONY: plan
 plan:
-	@ terraform plan
+	@ terraform plan \
+	    -var-file="../terraform.tfvars"
 
 .PHONY: apply
 apply:
-	@ terraform apply
+	@ terraform apply \
+	    -var-file="../terraform.tfvars"
 
 .PHONY: refresh
 refresh:
-	@ terraform refresh
+	@ terraform refresh \
+	    -var-file="../terraform.tfvars"
 
 .PHONY: destroy
 destroy:
-	@ terraform destroy
+	@ terraform destroy \
+	    -var-file="../terraform.tfvars"
 
 .PHONY: clean
 clean:

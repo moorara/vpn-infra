@@ -1,19 +1,19 @@
 ssh_path := ssh
 key_file := $(ssh_path)/vpn
 
-
 terraform.tfvars:
-	@ echo 'access_key = "tbd"' >> terraform.tfvars
-	@ echo 'secret_key = "tbd"' >> terraform.tfvars
-	@ echo 'region     = "tbd"' >> terraform.tfvars
-	@ echo 'name       = "tbd"' >> terraform.tfvars
-	@ echo 'subdomain  = "tbd"' >> terraform.tfvars
-	@ echo 'acme_email = "tbd"' >> terraform.tfvars
+	@ read -p "Enter an AWS region: " region; \
+	  read -p "Enter a name for the deployment: " name; \
+	  read -p "Enter a subdomain for accessing the VPN server: " subdomain; \
+	  read -p "Enter an email address for registering an account with ACME: " acme_email; \
+	  echo "region     = \"$$region\"" > terraform.tfvars; \
+	  echo "name       = \"$$name\"" >> terraform.tfvars; \
+	  echo "subdomain  = \"$$subdomain\"" >> terraform.tfvars; \
+	  echo "acme_email = \"$$acme_email\"" >> terraform.tfvars; \
 
 config.s3.tfbackend:
-	@ echo 'bucket = "tbd"' >> config.s3.tfbackend
-	@ echo 'key    = "tbd"' >> config.s3.tfbackend
-	@ echo 'region = "tbd"' >> config.s3.tfbackend
+	@ read -p "Enter the name of deployment: " name; \
+	  echo "key = \"server/$$name/terraform.tfstate\"" > config.s3.tfbackend; \
 
 .PHONY: keys
 keys:
@@ -25,7 +25,8 @@ keys:
 .PHONY: init
 init:
 	@ terraform init \
-	    -backend-config=config.s3.tfbackend
+	    -backend-config="../config.s3.tfbackend" \
+	    -backend-config="config.s3.tfbackend"
 
 .PHONY: format
 format:
@@ -38,24 +39,28 @@ validate:
 .PHONY: plan
 plan:
 	@ terraform plan \
+	    -var-file="../terraform.tfvars" \
 	    -var ssh_public_key_file=$(key_file).pub \
 	    -var ssh_private_key_file=$(key_file).pem
 
 .PHONY: apply
 apply:
 	@ terraform apply \
+	    -var-file="../terraform.tfvars" \
 	    -var ssh_public_key_file=$(key_file).pub \
 	    -var ssh_private_key_file=$(key_file).pem
 
 .PHONY: refresh
 refresh:
 	@ terraform refresh \
+	    -var-file="../terraform.tfvars" \
 	    -var ssh_public_key_file=$(key_file).pub \
 	    -var ssh_private_key_file=$(key_file).pem
 
 .PHONY: destroy
 destroy:
 	@ terraform destroy \
+	    -var-file="../terraform.tfvars" \
 	    -var ssh_public_key_file=$(key_file).pub \
 	    -var ssh_private_key_file=$(key_file).pem
 
