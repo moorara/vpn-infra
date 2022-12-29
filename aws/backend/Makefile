@@ -1,7 +1,7 @@
 terraform.tfvars:
 	@ read -p "Enter an AWS region: " region; \
 	  read -p "Enter a domain name registered with AWS: " domain; \
-	  echo "region = \"$$region\"" >> terraform.tfvars; \
+	  echo "region = \"$$region\"" > terraform.tfvars; \
 	  echo "domain = \"$$domain\"" >> terraform.tfvars; \
 
 .PHONY: init
