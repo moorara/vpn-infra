@@ -1,7 +1,7 @@
 terraform.tfvars:
 	@ read -p "Enter a domain name registered with Google Cloud: " domain; \
 	  read -p "Enter a space-separated list of names to create a subdomain for each: " names; \
-	  echo "domain = \"$$domain\"" >> terraform.tfvars; \
+	  echo "domain = \"$$domain\"" > terraform.tfvars; \
 	  echo "names  = $$(echo "\"$$names\"" | jq -c 'split(" ")')" >> terraform.tfvars; \
 
 .PHONY: init

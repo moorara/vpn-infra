@@ -1,7 +1,7 @@
 terraform.tfvars:
 	@ read -p "Enter a Google Cloud location (see https://cloud.google.com/storage/docs/locations): " location; \
 	  read -p "Enter a domain name registered with Google Cloud: " domain; \
-	  echo "location = \"$$location\"" >> terraform.tfvars; \
+	  echo "location = \"$$location\"" > terraform.tfvars; \
 	  echo "domain   = \"$$domain\"" >> terraform.tfvars; \
 
 .PHONY: init
