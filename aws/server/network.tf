@@ -136,6 +136,14 @@ resource "aws_security_group" "vpn" {
     description = "Allow https access from trusted addresses."
   }
 
+  ingress {
+    protocol    = "tcp"
+    from_port   = 5000
+    to_port     = 9999
+    cidr_blocks = [ "0.0.0.0/0" ]
+    description = "Allow v2ray access from the Internet."
+  }
+
   tags = {
     Name = "${var.name}-vpn"
   }
