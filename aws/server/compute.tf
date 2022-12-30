@@ -70,11 +70,7 @@ resource "aws_launch_template" "vpn" {
 # https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file
 data "template_file" "user_data" {
   template = file("${path.module}/bootstrap.sh")
-  vars = {
-    username = local.panel_username
-    password = local.panel_password
-    port     = local.panel_port
-  }
+  vars = {}
 }
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance

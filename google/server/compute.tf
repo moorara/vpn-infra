@@ -66,11 +66,7 @@ resource "google_compute_instance_template" "vpn" {
 # https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file
 data "template_file" "startup_script" {
   template = file("${path.module}/bootstrap.sh")
-  vars = {
-    username = local.panel_username
-    password = local.panel_password
-    port     = local.panel_port
-  }
+  vars = {}
 }
 
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance_from_template
