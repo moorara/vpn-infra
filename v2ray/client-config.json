@@ -1,0 +1,13 @@
+{
+  "v": "2",
+  "ps": "magic",
+  "add": "18.194.124.51",
+  "port": 6969,
+  "id": "69b85edb-8220-4865-bfeb-aaa07aabeb06",
+  "aid": 0,
+  "net": "ws",
+  "type": "none",
+  "host": "",
+  "path": "/graphql",
+  "tls": ""
+}
