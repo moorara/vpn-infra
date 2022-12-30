@@ -17,7 +17,7 @@ resource "tls_private_key" "vpn" {
 
 # https://registry.terraform.io/providers/vancluever/acme/latest/docs/resources/registration
 resource "acme_registration" "vpn" {
-  provider = acme.staging
+  # provider = acme.staging
 
   account_key_pem = tls_private_key.vpn.private_key_pem
   email_address   = var.acme_email
@@ -25,7 +25,7 @@ resource "acme_registration" "vpn" {
 
 # https://registry.terraform.io/providers/vancluever/acme/latest/docs/resources/certificate
 resource "acme_certificate" "vpn" {
-  provider = acme.staging
+  # provider = acme.staging
 
   account_key_pem           = acme_registration.vpn.account_key_pem
   common_name               = var.subdomain
