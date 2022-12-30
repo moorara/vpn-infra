@@ -160,3 +160,21 @@ resource "google_compute_firewall" "ingress_https" {
     ports    = [ "443" ]
   }
 }
+
+# https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall
+resource "google_compute_firewall" "ingress_v2ray" {
+  name    = "${var.name}-vpn-allow-v2ray"
+  project = var.project
+  network = google_compute_network.vpn.id
+
+  description   = "Allow V2Ray traffic from the Internet to the vpn subnetwork."
+  priority      = 1000
+  direction     = "INGRESS"
+  source_ranges = [ "0.0.0.0/0" ]
+  target_tags   = [ local.vpn_subnetwork_tag ]
+
+  allow {
+    protocol = "tcp"
+    ports    = [ "5000-9999" ]
+  }
+}
