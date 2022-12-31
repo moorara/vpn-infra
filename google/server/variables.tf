@@ -104,7 +104,7 @@ variable "machine_type" {
   description = "The Google Cloud machine type for VPN servers."
   type        = string
   nullable    = false
-  default     = "e2-standard-2"
+  default     = "n1-standard-1"
 }
 
 variable "ssh_public_key_file" {

@@ -103,7 +103,7 @@ variable "instance_type" {
   description = "The AWS EC2 instance type for VPN servers."
   type        = string
   nullable    = false
-  default     = "m5.large"
+  default     = "t3.small"
 }
 
 variable "ssh_public_key_file" {
