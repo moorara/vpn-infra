@@ -1,6 +1,8 @@
+name := $(shell cat terraform.tfvars | grep name | grep -oe '".*"')
+
 ssh_user := admin
 ssh_path := ssh
-key_file := $(ssh_path)/vpn
+key_file := $(ssh_path)/vpn-$(name)
 
 terraform.tfvars:
 	@ read -p "Enter a Google Cloud region: " region; \
