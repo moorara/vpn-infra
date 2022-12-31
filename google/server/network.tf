@@ -92,6 +92,8 @@ resource "google_compute_firewall" "ingress_self" {
 
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall
 resource "google_compute_firewall" "ingress_icmp" {
+  count = var.incoming_icmp.enabled ? 1 : 0
+
   name    = "${var.name}-vpn-allow-icmp"
   project = var.project
   network = google_compute_network.vpn.id
@@ -99,7 +101,7 @@ resource "google_compute_firewall" "ingress_icmp" {
   description   = "Allow ICMP traffic from trusted addresses to the vpn subnetwork."
   priority      = 1000
   direction     = "INGRESS"
-  source_ranges = var.icmp_incoming_cidrs
+  source_ranges = var.incoming_icmp.cidrs
   target_tags   = [ local.vpn_subnetwork_tag ]
 
   allow {
@@ -109,6 +111,8 @@ resource "google_compute_firewall" "ingress_icmp" {
 
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall
 resource "google_compute_firewall" "ingress_ssh" {
+  count = var.incoming_ssh.enabled ? 1 : 0
+
   name    = "${var.name}-vpn-allow-ssh"
   project = var.project
   network = google_compute_network.vpn.id
@@ -116,7 +120,7 @@ resource "google_compute_firewall" "ingress_ssh" {
   description   = "Allow SSH traffic from trusted addresses to the vpn subnetwork."
   priority      = 1000
   direction     = "INGRESS"
-  source_ranges = var.ssh_incoming_cidrs
+  source_ranges = var.incoming_ssh.cidrs
   target_tags   = [ local.vpn_subnetwork_tag ]
 
   allow {
@@ -127,6 +131,8 @@ resource "google_compute_firewall" "ingress_ssh" {
 
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall
 resource "google_compute_firewall" "ingress_http" {
+  count = var.incoming_http.enabled ? 1 : 0
+
   name    = "${var.name}-vpn-allow-http"
   project = var.project
   network = google_compute_network.vpn.id
@@ -134,7 +140,7 @@ resource "google_compute_firewall" "ingress_http" {
   description   = "Allow HTTP traffic from trusted addresses to the vpn subnetwork."
   priority      = 1000
   direction     = "INGRESS"
-  source_ranges = var.http_incoming_cidrs
+  source_ranges = var.incoming_http.cidrs
   target_tags   = [ local.vpn_subnetwork_tag ]
 
   allow {
@@ -145,6 +151,8 @@ resource "google_compute_firewall" "ingress_http" {
 
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall
 resource "google_compute_firewall" "ingress_https" {
+  count = var.incoming_https.enabled ? 1 : 0
+
   name    = "${var.name}-vpn-allow-https"
   project = var.project
   network = google_compute_network.vpn.id
@@ -152,7 +160,7 @@ resource "google_compute_firewall" "ingress_https" {
   description   = "Allow HTTPS traffic from trusted addresses to the vpn subnetwork."
   priority      = 1000
   direction     = "INGRESS"
-  source_ranges = var.https_incoming_cidrs
+  source_ranges = var.incoming_https.cidrs
   target_tags   = [ local.vpn_subnetwork_tag ]
 
   allow {
@@ -163,18 +171,20 @@ resource "google_compute_firewall" "ingress_https" {
 
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall
 resource "google_compute_firewall" "ingress_v2ray" {
+  count = var.incoming_v2ray.enabled ? 1 : 0
+
   name    = "${var.name}-vpn-allow-v2ray"
   project = var.project
   network = google_compute_network.vpn.id
 
-  description   = "Allow V2Ray traffic from the Internet to the vpn subnetwork."
+  description   = "Allow V2Ray traffic from trusted addresses to the vpn subnetwork."
   priority      = 1000
   direction     = "INGRESS"
-  source_ranges = [ "0.0.0.0/0" ]
+  source_ranges = var.incoming_v2ray.cidrs
   target_tags   = [ local.vpn_subnetwork_tag ]
 
   allow {
     protocol = "tcp"
-    ports    = [ "5000-9999" ]
+    ports    = [ "${var.incoming_v2ray.from_port}-${var.incoming_v2ray.to_port}" ]
   }
 }
