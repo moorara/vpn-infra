@@ -1,5 +1,7 @@
+name := $(shell cat terraform.tfvars | grep name | grep -oe '".*"')
+
 ssh_path := ssh
-key_file := $(ssh_path)/vpn
+key_file := $(ssh_path)/vpn-$(name)
 
 terraform.tfvars:
 	@ read -p "Enter an AWS region: " region; \

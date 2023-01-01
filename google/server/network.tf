@@ -1,6 +1,6 @@
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network
 resource "google_compute_network" "vpn" {
-  name                    = "${var.name}-vpn-network"
+  name                    = "vpn-${var.name}-network"
   project                 = var.project
   routing_mode            = "REGIONAL"
   auto_create_subnetworks = false
@@ -8,7 +8,7 @@ resource "google_compute_network" "vpn" {
 
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_subnetwork
 resource "google_compute_subnetwork" "vpn" {
-  name                     = "${var.name}-vpn-subnet"
+  name                     = "vpn-${var.name}-subnet"
   project                  = var.project
   region                   = var.region
   network                  = google_compute_network.vpn.id
@@ -22,7 +22,7 @@ resource "google_compute_subnetwork" "vpn" {
 
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_router
 resource "google_compute_router" "vpn" {
-  name    = "${var.name}-vpn-router"
+  name    = "vpn-${var.name}-router"
   project = var.project
   region  = var.region
   network = google_compute_network.vpn.id
@@ -30,7 +30,7 @@ resource "google_compute_router" "vpn" {
 
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_router_nat
 resource "google_compute_router_nat" "main" {
-  name                               = "${var.name}-vpn-router-nat"
+  name                               = "vpn-${var.name}-router-nat"
   project                            = var.project
   region                             = var.region
   router                             = google_compute_router.vpn.name
@@ -48,7 +48,7 @@ resource "google_compute_router_nat" "main" {
 
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall
 resource "google_compute_firewall" "egress_all" {
-  name    = "${var.name}-vpn-allow-outgoing"
+  name    = "vpn-${var.name}-allow-outgoing"
   project = var.project
   network = google_compute_network.vpn.id
 
@@ -65,7 +65,7 @@ resource "google_compute_firewall" "egress_all" {
 
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall
 resource "google_compute_firewall" "ingress_self" {
-  name    = "${var.name}-vpn-allow-internal"
+  name    = "vpn-${var.name}-allow-internal"
   project = var.project
   network = google_compute_network.vpn.id
 
@@ -92,14 +92,16 @@ resource "google_compute_firewall" "ingress_self" {
 
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall
 resource "google_compute_firewall" "ingress_icmp" {
-  name    = "${var.name}-vpn-allow-icmp"
+  count = var.incoming_icmp.enabled ? 1 : 0
+
+  name    = "vpn-${var.name}-allow-icmp"
   project = var.project
   network = google_compute_network.vpn.id
 
   description   = "Allow ICMP traffic from trusted addresses to the vpn subnetwork."
   priority      = 1000
   direction     = "INGRESS"
-  source_ranges = var.icmp_incoming_cidrs
+  source_ranges = var.incoming_icmp.cidrs
   target_tags   = [ local.vpn_subnetwork_tag ]
 
   allow {
@@ -109,14 +111,16 @@ resource "google_compute_firewall" "ingress_icmp" {
 
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall
 resource "google_compute_firewall" "ingress_ssh" {
-  name    = "${var.name}-vpn-allow-ssh"
+  count = var.incoming_ssh.enabled ? 1 : 0
+
+  name    = "vpn-${var.name}-allow-ssh"
   project = var.project
   network = google_compute_network.vpn.id
 
   description   = "Allow SSH traffic from trusted addresses to the vpn subnetwork."
   priority      = 1000
   direction     = "INGRESS"
-  source_ranges = var.ssh_incoming_cidrs
+  source_ranges = var.incoming_ssh.cidrs
   target_tags   = [ local.vpn_subnetwork_tag ]
 
   allow {
@@ -127,14 +131,16 @@ resource "google_compute_firewall" "ingress_ssh" {
 
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall
 resource "google_compute_firewall" "ingress_http" {
-  name    = "${var.name}-vpn-allow-http"
+  count = var.incoming_http.enabled ? 1 : 0
+
+  name    = "vpn-${var.name}-allow-http"
   project = var.project
   network = google_compute_network.vpn.id
 
   description   = "Allow HTTP traffic from trusted addresses to the vpn subnetwork."
   priority      = 1000
   direction     = "INGRESS"
-  source_ranges = var.http_incoming_cidrs
+  source_ranges = var.incoming_http.cidrs
   target_tags   = [ local.vpn_subnetwork_tag ]
 
   allow {
@@ -145,14 +151,16 @@ resource "google_compute_firewall" "ingress_http" {
 
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall
 resource "google_compute_firewall" "ingress_https" {
-  name    = "${var.name}-vpn-allow-https"
+  count = var.incoming_https.enabled ? 1 : 0
+
+  name    = "vpn-${var.name}-allow-https"
   project = var.project
   network = google_compute_network.vpn.id
 
   description   = "Allow HTTPS traffic from trusted addresses to the vpn subnetwork."
   priority      = 1000
   direction     = "INGRESS"
-  source_ranges = var.https_incoming_cidrs
+  source_ranges = var.incoming_https.cidrs
   target_tags   = [ local.vpn_subnetwork_tag ]
 
   allow {
@@ -163,18 +171,20 @@ resource "google_compute_firewall" "ingress_https" {
 
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall
 resource "google_compute_firewall" "ingress_v2ray" {
-  name    = "${var.name}-vpn-allow-v2ray"
+  count = var.incoming_v2ray.enabled ? 1 : 0
+
+  name    = "vpn-${var.name}-allow-v2ray"
   project = var.project
   network = google_compute_network.vpn.id
 
-  description   = "Allow V2Ray traffic from the Internet to the vpn subnetwork."
+  description   = "Allow V2Ray traffic from trusted addresses to the vpn subnetwork."
   priority      = 1000
   direction     = "INGRESS"
-  source_ranges = [ "0.0.0.0/0" ]
+  source_ranges = var.incoming_v2ray.cidrs
   target_tags   = [ local.vpn_subnetwork_tag ]
 
   allow {
     protocol = "tcp"
-    ports    = [ "5000-9999" ]
+    ports    = [ "${var.incoming_v2ray.from_port}-${var.incoming_v2ray.to_port}" ]
   }
 }

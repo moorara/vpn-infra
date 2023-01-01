@@ -5,7 +5,7 @@ resource "aws_vpc" "vpn" {
   enable_dns_hostnames = false
 
   tags = {
-    Name   = "${var.name}-vpn-network"
+    Name   = "vpn-${var.name}-network"
     Region = var.region
   }
 
@@ -24,7 +24,7 @@ resource "aws_subnet" "vpn" {
   availability_zone = data.aws_availability_zones.available.names[count.index]
 
   tags = {
-    Name   = format("%s-vpn-subnet-%d", var.name, count.index + 1)
+    Name   = format("vpn-%s-subnet-%d", var.name, count.index + 1)
     Region = var.region
   }
 
@@ -40,7 +40,7 @@ resource "aws_internet_gateway" "vpn" {
   vpc_id = aws_vpc.vpn.id
 
   tags = {
-    Name   = "${var.name}-vpn"
+    Name   = "vpn-${var.name}"
     Region = var.region
   }
 
@@ -65,7 +65,7 @@ resource "aws_route_table" "vpn" {
   }
 
   tags = {
-    Name   = "${var.name}-vpn"
+    Name   = "vpn-${var.name}"
     Region = var.region
   }
 
@@ -85,7 +85,7 @@ resource "aws_route_table_association" "vpn" {
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group
 resource "aws_security_group" "vpn" {
-  name   = "${var.name}-vpn"
+  name   = "vpn-${var.name}"
   vpc_id = aws_vpc.vpn.id
 
   egress {
@@ -104,48 +104,63 @@ resource "aws_security_group" "vpn" {
     description = "Allow all incoming traffic inside the VPC."
   }
 
-  ingress {
-    protocol    = "icmp"
-    from_port   = 8 # ICMP type number
-    to_port     = 0 # ICMP code
-    cidr_blocks = var.icmp_incoming_cidrs
-    description = "Allow icmp access from trusted addresses."
+  dynamic "ingress" {
+    for_each = var.incoming_icmp.enabled ? [ true ] : []
+    content {
+      protocol    = "icmp"
+      from_port   = 8 # ICMP type number
+      to_port     = 0 # ICMP code
+      cidr_blocks = var.incoming_icmp.cidrs
+      description = "Allow icmp access from trusted addresses."
+    }
   }
 
-  ingress {
-    protocol    = "tcp"
-    from_port   = 22
-    to_port     = 22
-    cidr_blocks = var.ssh_incoming_cidrs
-    description = "Allow ssh access from trusted addresses."
+  dynamic "ingress" {
+    for_each = var.incoming_ssh.enabled ? [ true ] : []
+    content {
+      protocol    = "tcp"
+      from_port   = 22
+      to_port     = 22
+      cidr_blocks = var.incoming_ssh.cidrs
+      description = "Allow ssh access from trusted addresses."
+    }
   }
 
-  ingress {
-    protocol    = "tcp"
-    from_port   = 80
-    to_port     = 80
-    cidr_blocks = var.http_incoming_cidrs
-    description = "Allow http access from trusted addresses."
+  dynamic "ingress" {
+    for_each = var.incoming_http.enabled ? [ true ] : []
+    content {
+      protocol    = "tcp"
+      from_port   = 80
+      to_port     = 80
+      cidr_blocks = var.incoming_http.cidrs
+      description = "Allow http access from trusted addresses."
+    }
   }
 
-  ingress {
-    protocol    = "tcp"
-    from_port   = 443
-    to_port     = 443
-    cidr_blocks = var.https_incoming_cidrs
-    description = "Allow https access from trusted addresses."
+  dynamic "ingress" {
+    for_each = var.incoming_https.enabled ? [ true ] : []
+    content {
+      protocol    = "tcp"
+      from_port   = 443
+      to_port     = 443
+      cidr_blocks = var.incoming_https.cidrs
+      description = "Allow https access from trusted addresses."
+    }
   }
 
-  ingress {
-    protocol    = "tcp"
-    from_port   = 5000
-    to_port     = 9999
-    cidr_blocks = [ "0.0.0.0/0" ]
-    description = "Allow v2ray access from the Internet."
+  dynamic "ingress" {
+    for_each = var.incoming_v2ray.enabled ? [ true ] : []
+    content {
+      protocol    = "tcp"
+      from_port   = var.incoming_v2ray.from_port
+      to_port     = var.incoming_v2ray.to_port
+      cidr_blocks = var.incoming_v2ray.cidrs
+      description = "Allow v2ray access from trusted addresses."
+    }
   }
 
   tags = {
-    Name = "${var.name}-vpn"
+    Name = "vpn-${var.name}"
   }
 
   # https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle#create_before_destroy

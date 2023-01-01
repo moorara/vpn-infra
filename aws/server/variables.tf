@@ -35,39 +35,75 @@ variable "acme_email" {
   nullable    = false
 }
 
-variable "icmp_incoming_cidrs" {
-  description = "A set of trusted CIDR blocks for incoming ICMP traffic."
-  type        = set(string)
-  nullable    = false
-  default     = [ "0.0.0.0/0" ]
+variable "incoming_icmp" {
+  description = "Configurations for incoming ICMP traffic."
+  type = object({
+    enabled = bool
+    cidrs   = set(string)
+  })
+  default = {
+    enabled = false
+    cidrs   = [ "0.0.0.0/0" ]
+  }
 }
 
-variable "ssh_incoming_cidrs" {
-  description = "A set of trusted CIDR blocks for incoming SSH traffic."
-  type        = set(string)
-  nullable    = false
-  default     = [ "0.0.0.0/0" ]
+variable "incoming_ssh" {
+  description = "Configurations for incoming SSH traffic."
+  type = object({
+    enabled = bool
+    cidrs   = set(string)
+  })
+  default = {
+    enabled = true
+    cidrs   = [ "0.0.0.0/0" ]
+  }
 }
 
-variable "http_incoming_cidrs" {
-  description = "A set of trusted CIDR blocks for incoming HTTP traffic."
-  type        = set(string)
-  nullable    = false
-  default     = [ "0.0.0.0/0" ]
+variable "incoming_http" {
+  description = "Configurations for incoming HTTP traffic."
+  type = object({
+    enabled = bool
+    cidrs   = set(string)
+  })
+  default = {
+    enabled = true
+    cidrs   = [ "0.0.0.0/0" ]
+  }
 }
 
-variable "https_incoming_cidrs" {
-  description = "A set of trusted CIDR blocks for incoming HTTPS traffic."
-  type        = set(string)
-  nullable    = false
-  default     = [ "0.0.0.0/0" ]
+variable "incoming_https" {
+  description = "Configurations for incoming HTTPS traffic."
+  type = object({
+    enabled = bool
+    cidrs   = set(string)
+  })
+  default = {
+    enabled = true
+    cidrs   = [ "0.0.0.0/0" ]
+  }
+}
+
+variable "incoming_v2ray" {
+  description = "Configurations for incoming V2Ray traffic."
+  type = object({
+    enabled   = bool
+    from_port = number
+    to_port   = number
+    cidrs     = set(string)
+  })
+  default = {
+    enabled   = true
+    from_port = 4000
+    to_port   = 9999
+    cidrs     = [ "0.0.0.0/0" ]
+  }
 }
 
 variable "instance_type" {
   description = "The AWS EC2 instance type for VPN servers."
   type        = string
   nullable    = false
-  default     = "m5.large"
+  default     = "t3.small"
 }
 
 variable "ssh_public_key_file" {

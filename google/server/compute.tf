@@ -6,7 +6,7 @@ data "google_compute_image" "debian" {
 
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance_template
 resource "google_compute_instance_template" "vpn" {
-  name         = "${var.name}-vpn-template"
+  name         = "vpn-${var.name}-template"
   project      = var.project
   region       = var.region
   machine_type = var.machine_type
@@ -51,10 +51,10 @@ resource "google_compute_instance_template" "vpn" {
     startup-script = data.template_file.startup_script.rendered
   }
 
-  tags = [ "vpn" ]
+  tags = [ "vpn", var.name ]
 
   labels = {
-    name = "${var.name}-vpn"
+    name = "vpn-${var.name}"
   }
 
   lifecycle {
@@ -75,7 +75,7 @@ data "template_file" "startup_script" {
 
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance_from_template
 resource "google_compute_instance_from_template" "vpn" {
-  name                     = "${var.name}-vpn"
+  name                     = "vpn-${var.name}"
   zone                     = data.google_compute_zones.available.names[0]
   source_instance_template = google_compute_instance_template.vpn.id
 

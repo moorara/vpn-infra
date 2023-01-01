@@ -1,10 +1,10 @@
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_instance_profile
 resource "aws_iam_instance_profile" "vpn" {
-  name = "${var.name}-vpn"
+  name = "vpn-${var.name}"
   role = aws_iam_role.vpn.name
 
   tags = {
-    Name = "${var.name}-vpn"
+    Name = "vpn-${var.name}"
   }
 
   lifecycle {
@@ -14,7 +14,7 @@ resource "aws_iam_instance_profile" "vpn" {
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role
 resource "aws_iam_role" "vpn" {
-  name = "${var.name}-vpn"
+  name = "vpn-${var.name}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -29,7 +29,7 @@ resource "aws_iam_role" "vpn" {
   })
 
   tags = {
-    Name = "${var.name}-vpn"
+    Name = "vpn-${var.name}"
   }
 
   lifecycle {
@@ -39,7 +39,7 @@ resource "aws_iam_role" "vpn" {
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy
 resource "aws_iam_role_policy" "vpn" {
-  name = "${var.name}-vpn"
+  name = "vpn-${var.name}"
   role = aws_iam_role.vpn.id
 
   policy = jsonencode({
