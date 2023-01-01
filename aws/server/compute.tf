@@ -17,11 +17,11 @@ data "aws_ami" "debian" {
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/key_pair
 resource "aws_key_pair" "vpn" {
-  key_name   = "${var.name}-vpn"
+  key_name   = "vpn-${var.name}"
   public_key = file(var.ssh_public_key_file)
 
   tags = {
-    Name = "${var.name}-vpn"
+    Name = "vpn-${var.name}"
   }
 
   lifecycle {
@@ -31,7 +31,7 @@ resource "aws_key_pair" "vpn" {
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_template
 resource "aws_launch_template" "vpn" {
-  name                                 = "${var.name}-vpn"
+  name                                 = "vpn-${var.name}"
   image_id                             = data.aws_ami.debian.id
   instance_type                        = var.instance_type
   key_name                             = aws_key_pair.vpn.key_name
@@ -51,12 +51,12 @@ resource "aws_launch_template" "vpn" {
   tag_specifications {
     resource_type = "instance"
     tags = {
-      Name = "${var.name}-vpn"
+      Name = "vpn-${var.name}"
     }
   }
 
   tags = {
-    Name = "${var.name}-vpn"
+    Name = "vpn-${var.name}"
   }
 
   lifecycle {

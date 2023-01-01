@@ -5,7 +5,7 @@ resource "aws_vpc" "vpn" {
   enable_dns_hostnames = false
 
   tags = {
-    Name   = "${var.name}-vpn-network"
+    Name   = "vpn-${var.name}-network"
     Region = var.region
   }
 
@@ -24,7 +24,7 @@ resource "aws_subnet" "vpn" {
   availability_zone = data.aws_availability_zones.available.names[count.index]
 
   tags = {
-    Name   = format("%s-vpn-subnet-%d", var.name, count.index + 1)
+    Name   = format("vpn-%s-subnet-%d", var.name, count.index + 1)
     Region = var.region
   }
 
@@ -40,7 +40,7 @@ resource "aws_internet_gateway" "vpn" {
   vpc_id = aws_vpc.vpn.id
 
   tags = {
-    Name   = "${var.name}-vpn"
+    Name   = "vpn-${var.name}"
     Region = var.region
   }
 
@@ -65,7 +65,7 @@ resource "aws_route_table" "vpn" {
   }
 
   tags = {
-    Name   = "${var.name}-vpn"
+    Name   = "vpn-${var.name}"
     Region = var.region
   }
 
@@ -85,7 +85,7 @@ resource "aws_route_table_association" "vpn" {
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group
 resource "aws_security_group" "vpn" {
-  name   = "${var.name}-vpn"
+  name   = "vpn-${var.name}"
   vpc_id = aws_vpc.vpn.id
 
   egress {
@@ -160,7 +160,7 @@ resource "aws_security_group" "vpn" {
   }
 
   tags = {
-    Name = "${var.name}-vpn"
+    Name = "vpn-${var.name}"
   }
 
   # https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle#create_before_destroy
